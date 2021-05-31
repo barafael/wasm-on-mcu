@@ -17,6 +17,12 @@ static ALLOCATOR: CortexMHeap = CortexMHeap::empty();
 fn main() -> ! {
     defmt::info!("Hello, h7_blinky!");
 
+    let start = cortex_m_rt::heap_start() as usize;
+    let size = 1248576;
+    unsafe { ALLOCATOR.init(start, size) }
+
+    defmt::info!("Heap is ready");
+
     // - board setup ----------------------------------------------------------
 
     let board = nucleo::board::Board::take().unwrap();
@@ -52,6 +58,8 @@ fn main() -> ! {
         cortex_m::asm::delay(one_second);
     });
 
+    defmt::info!("Module is ready.");
+
     // Instantiate a module with empty imports and
     // assert that there is no `start` function.
     let instance: ModuleRef = ModuleInstance::new(&module, &ImportsBuilder::default())
@@ -61,6 +69,8 @@ fn main() -> ! {
             cortex_m::asm::delay(one_second);
         })
         .assert_no_start();
+
+    defmt::info!("Instance is ready.");
 
     // Finally, invoke the exported function "test" with no parameters
     // and empty external function executor.
