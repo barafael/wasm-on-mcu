@@ -18,7 +18,8 @@ nucleo-h7xx = "0.1.0"
 alloc-cortex-m = "0.4.1"
 
 [dependencies.wasmi]
-version = "0.9.0"
+#path = "/home/rafaelbachmann/wasmi"
+git = "https://github.com/barafael/wasmi"
 default-features = false
 features = ["core"]
 

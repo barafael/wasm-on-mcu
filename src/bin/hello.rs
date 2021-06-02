@@ -18,7 +18,7 @@ fn main() -> ! {
     defmt::info!("Hello, h7_blinky!");
 
     let start = cortex_m_rt::heap_start() as usize;
-    let size = 1248576;
+    let size = 1048576;
     unsafe { ALLOCATOR.init(start, size) }
 
     defmt::info!("Heap is ready");
