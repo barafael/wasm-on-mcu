@@ -46,8 +46,8 @@ fn main() -> ! {
     // - main loop ------------------------------------------------------------
 
     let wasm_binary = [
-        0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 96, 0, 1, 127, 3, 2, 1, 0, 7, 8, 1, 4, 116, 101, 115,
-        116, 0, 0, 10, 7, 1, 5, 0, 65, 185, 10, 11,
+        0, 97, 115, 109, 1, 0, 0, 0, 1, 6, 1, 96, 1, 127, 1, 127, 3, 2, 1, 0, 7, 9, 1, 5, 99, 111,
+        108, 111, 114, 0, 0, 10, 9, 1, 7, 0, 32, 0, 65, 3, 111, 11,
     ];
 
     let one_second = ccdr.clocks.sys_ck().0;
@@ -72,36 +72,36 @@ fn main() -> ! {
 
     defmt::info!("Instance is ready.");
 
-    // Finally, invoke the exported function "test" with no parameters
-    // and empty external function executor.
-    assert_eq!(
-        instance
-            .invoke_export("test", &[], &mut NopExternals,)
-            .unwrap_or_else(|_| {
-                loop {
-                    user_leds.ld3.on();
-                    user_leds.ld3.off();
-                    cortex_m::asm::delay(one_second);
-                }
-            }),
-        Some(RuntimeValue::I32(1337)),
-    );
+    let mut n: usize = 0;
+    loop {
+        let val = instance
+            .invoke_export("color", &[RuntimeValue::I32(n as i32)], &mut NopExternals)
+            .unwrap_or_else(|_| loop {
+                user_leds.ld3.on();
+                user_leds.ld3.off();
+                cortex_m::asm::delay(one_second);
+            })
+            .unwrap();
 
-    for n in 0..10 {
-        user_leds.ld3.off();
-        user_leds.ld1.on();
-        cortex_m::asm::delay(one_second);
+        if let RuntimeValue::I32(v) = val {
+            match v {
+                0 => user_leds.ld1.on(),
+                1 => user_leds.ld2.on(),
+                2 => user_leds.ld3.on(),
+                _ => {
+                    user_leds.ld1.on();
+                    user_leds.ld2.on();
+                    user_leds.ld3.on();
+                }
+            }
+            cortex_m::asm::delay(one_second);
+        }
 
         user_leds.ld1.off();
-        user_leds.ld2.on();
-        cortex_m::asm::delay(one_second);
-
         user_leds.ld2.off();
-        user_leds.ld3.on();
-        cortex_m::asm::delay(one_second);
+        user_leds.ld3.off();
 
-        defmt::info!("loop: {:?} of 10", n + 1);
+        defmt::info!("loop: {:?}", n + 1);
+        n += 1;
     }
-
-    h7_blinky::exit()
 }
