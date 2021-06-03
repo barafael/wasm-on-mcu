@@ -20,6 +20,7 @@ alloc-cortex-m = "0.4.1"
 [dependencies.wasmi]
 #path = "/home/rafaelbachmann/wasmi"
 git = "https://github.com/barafael/wasmi"
+branch = "reduce_ram_usage"
 default-features = false
 features = ["core"]
 
