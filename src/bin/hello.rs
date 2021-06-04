@@ -15,7 +15,7 @@ static ALLOCATOR: CortexMHeap = CortexMHeap::empty();
 
 #[cortex_m_rt::entry]
 fn main() -> ! {
-    defmt::info!("Hello, h7_blinky!");
+    defmt::info!("Hello, wasm-on-mcu!");
 
     let start = cortex_m_rt::heap_start() as usize;
     let size = 1048576;
@@ -70,12 +70,19 @@ fn main() -> ! {
         })
         .assert_no_start();
 
+    let mut stack_rec = StackRecycler::with_limits(84 * 1024, 84 * 1024);
+
     defmt::info!("Instance is ready.");
 
     let mut n: usize = 0;
     loop {
         let val = instance
-            .invoke_export("color", &[RuntimeValue::I32(n as i32)], &mut NopExternals)
+            .invoke_export_with_stack(
+                "color",
+                &[RuntimeValue::I32(n as i32)],
+                &mut NopExternals,
+                &mut stack_rec,
+            )
             .unwrap_or_else(|_| loop {
                 user_leds.ld3.on();
                 user_leds.ld3.off();
@@ -104,5 +111,5 @@ fn main() -> ! {
         defmt::info!("loop: {:?}", n + 1);
         n += 1;
     }
-    h7_blinky::exit()
+    wasm_on_mcu::exit()
 }

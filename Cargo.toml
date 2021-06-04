@@ -1,12 +1,8 @@
 [package]
-name = "h7-blinky"
+name = "wasm-on-mcu"
 authors = ["Rafael Bachmann <rafael.bachmann@esrlabs.com>"]
 edition = "2018"
 version = "0.1.0"
-
-[workspace]
-members = ["testsuite"]
-
 
 [dependencies]
 cortex-m = "0.7.1"
@@ -18,9 +14,7 @@ nucleo-h7xx = "0.1.0"
 alloc-cortex-m = "0.4.1"
 
 [dependencies.wasmi]
-#path = "/home/rafaelbachmann/wasmi"
-git = "https://github.com/barafael/wasmi"
-branch = "reduce_ram_usage"
+version = "0.9.0"
 default-features = false
 features = ["core"]
 
