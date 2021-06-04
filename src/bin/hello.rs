@@ -104,4 +104,5 @@ fn main() -> ! {
         defmt::info!("loop: {:?}", n + 1);
         n += 1;
     }
+    h7_blinky::exit()
 }
