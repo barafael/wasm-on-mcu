@@ -5,18 +5,19 @@ edition = "2018"
 version = "0.1.0"
 
 [dependencies]
-cortex-m = "0.7.1"
-cortex-m-rt = "0.6.13"
-defmt = "0.2.0"
-defmt-rtt = "0.2.0"
-panic-probe = { version = "0.2.0", features = ["print-defmt"] }
-nucleo-h7xx = "0.1.0"
-alloc-cortex-m = "0.4.1"
+cortex-m = "0.7.6"
+cortex-m-rt = "0.7.1"
+defmt = "0.3.2"
+defmt-rtt = "0.3.2"
+panic-probe = { version = "0.3.0", features = ["print-defmt"] }
+nucleo-h7xx = "0.2.0"
+alloc-cortex-m = "0.4.2"
+embedded-hal = "0.2.7"
+# wat = "1.0.48"
 
 [dependencies.wasmi]
-version = "0.9.0"
+version = "0.15.0"
 default-features = false
-features = ["core"]
 
 [features]
 # set logging levels here
@@ -41,8 +42,8 @@ codegen-units = 1
 debug = 2
 debug-assertions = true # <-
 incremental = false
-opt-level = 3 # <-
-overflow-checks = true # <-
+opt-level = 3           # <-
+overflow-checks = true  # <-
 
 [profile.release]
 codegen-units = 1
@@ -50,5 +51,5 @@ debug = 2
 debug-assertions = false # <-
 incremental = false
 lto = 'fat'
-opt-level = 3 # <-
-overflow-checks = false # <-
+opt-level = 3            # <-
+overflow-checks = false  # <-
