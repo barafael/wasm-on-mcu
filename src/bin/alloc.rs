@@ -28,7 +28,9 @@ fn main() -> ! {
     let mut xs = Vec::new();
     xs.push(1);
 
-    loop { /* .. */ }
+    // Do not remove - pulls in the panic handler
+    #[allow(unreachable_code)]
+    wasmi_m4::exit()
 }
 
 #[alloc_error_handler]
