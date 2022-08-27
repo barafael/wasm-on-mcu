@@ -1,21 +1,12 @@
 #![no_main]
 #![no_std]
 #![feature(default_alloc_error_handler)]
-// For `T::addr()` of heap start
-#![feature(strict_provenance)]
+
+use stm32f4xx_hal::{prelude::*, rcc::RccExt};
+use wasmi_m4 as _; // global logger + panicking-behavior + memory layout
 
 use alloc_cortex_m::CortexMHeap;
 use embedded_hal::blocking::delay::DelayMs;
-use nucleo_h7xx::{
-    hal::{
-        prelude::{_stm32h7xx_hal_delay_DelayExt, _stm32h7xx_hal_gpio_GpioExt},
-        pwr::PwrExt,
-        rcc::RccExt,
-    },
-    led::Led,
-    led::UserLeds,
-    Board,
-};
 
 use wasmi::{Caller, Config, Engine, Extern, Func, Linker, Module, StackLimits, Store};
 
@@ -26,41 +17,29 @@ static ALLOCATOR: CortexMHeap = CortexMHeap::empty();
 
 #[cortex_m_rt::entry]
 fn main() -> ! {
-    defmt::info!("Hello, wasm-on-mcu!");
+    defmt::println!("Hello Wasmi :)");
 
-    let start = cortex_m_rt::heap_start().addr();
-    let size = 0x0010_0000;
-    unsafe { ALLOCATOR.init(start, size) }
+    // Initialize the allocator BEFORE you use it
+    {
+        use core::mem::MaybeUninit;
+        const HEAP_SIZE: usize = 1024 * 16;
+        static mut HEAP: [MaybeUninit<u8>; HEAP_SIZE] = [MaybeUninit::uninit(); HEAP_SIZE];
+        unsafe { ALLOCATOR.init(HEAP.as_ptr() as usize, HEAP_SIZE) }
+    }
 
-    defmt::info!("Heap is ready");
+    defmt::info!("Heap is ready.");
 
     // - board setup ----------------------------------------------------------
+    let dp = stm32f4xx_hal::pac::Peripherals::take().unwrap();
+    let cp = cortex_m::peripheral::Peripherals::take().unwrap();
 
-    let board = Board::take().unwrap();
+    let rcc = dp.RCC.constrain();
+    let clocks = rcc.cfgr.sysclk(48u32.MHz()).freeze();
+    let mut delay = cp.SYST.delay(&clocks);
 
-    let dp = nucleo_h7xx::pac::Peripherals::take().unwrap();
-    let cp = cortex_m::Peripherals::take().unwrap();
-
-    let ccdr = board.freeze_clocks(dp.PWR.constrain(), dp.RCC.constrain(), &dp.SYSCFG);
-
-    let pins = board.split_gpios(
-        dp.GPIOA.split(ccdr.peripheral.GPIOA),
-        dp.GPIOB.split(ccdr.peripheral.GPIOB),
-        dp.GPIOC.split(ccdr.peripheral.GPIOC),
-        dp.GPIOD.split(ccdr.peripheral.GPIOD),
-        dp.GPIOE.split(ccdr.peripheral.GPIOE),
-        dp.GPIOF.split(ccdr.peripheral.GPIOF),
-        dp.GPIOG.split(ccdr.peripheral.GPIOG),
-    );
-
-    let mut user_leds = UserLeds::new(pins.user_leds);
-
-    let mut delay = cp.SYST.delay(ccdr.clocks);
+    defmt::info!("Board is ready.");
 
     // - module load -----------------------------------------------------------
-    // First step is to create the Wasm execution engine with some config.
-    // In this example we are using the default configuration.
-    // TODO adapt config for lower stack usage (and then try running on Cortex-M4 target!)
     let mut config = Config::default();
     config.set_stack_limits(StackLimits::new(256, 512, 128).unwrap());
 
@@ -114,25 +93,11 @@ fn main() -> ! {
 
         defmt::info!("num: {}", num);
 
-        match num {
-            0 => user_leds.ld1.on(),
-            1 => user_leds.ld2.on(),
-            2 => user_leds.ld3.on(),
-            _ => {
-                user_leds.ld1.on();
-                user_leds.ld2.on();
-                user_leds.ld3.on();
-            }
-        }
         delay.delay_ms(1000_u16);
-
-        user_leds.ld1.off();
-        user_leds.ld2.off();
-        user_leds.ld3.off();
 
         n += 1;
     }
     // Do not remove - pulls in the panic handler
     #[allow(unreachable_code)]
-    wasm_on_mcu::exit()
+    wasmi_m4::exit()
 }

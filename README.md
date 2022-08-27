@@ -1,9 +1,8 @@
-# Run WASM on MCU!
+# Run WASM on MCU
 
 For defmt etc:
 
 Based on the lovely: [knurling-rs/app-template](https://github.com/knurling-rs/app-template)
-
 
 ## Dependencies
 
@@ -19,13 +18,11 @@ Based on the lovely: [knurling-rs/app-template](https://github.com/knurling-rs/a
 
 Download updater: [stsw-link007](https://www.st.com/content/st_com/en/products/development-tools/software-development-tools/stm32-software-development-tools/stm32-programmers/stsw-link007.html)
 
-### Run on STM32H743ZITx
+### Run on STM32F411CEUx
 
-Run whichever $(binary) you want to run:
-
-    probe-run --chip STM32H745ZITx target/thumbv7em-none-eabihf/debug/$(binary)
+    cargo run -b binary
 
 ## License
 
 - Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or
-  http://www.apache.org/licenses/LICENSE-2.0)
+  <http://www.apache.org/licenses/LICENSE-2.0>)
