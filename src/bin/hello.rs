@@ -17,7 +17,7 @@ use nucleo_h7xx::{
     Board,
 };
 
-use wasmi::{Caller, Config, Engine, Extern, Func, Linker, Module, Store};
+use wasmi::{Caller, Config, Engine, Extern, Func, Linker, Module, StackLimits, Store};
 
 type HostState = u32;
 
@@ -61,7 +61,8 @@ fn main() -> ! {
     // First step is to create the Wasm execution engine with some config.
     // In this example we are using the default configuration.
     // TODO adapt config for lower stack usage (and then try running on Cortex-M4 target!)
-    let config = Config::default();
+    let mut config = Config::default();
+    config.set_stack_limits(StackLimits::new(256, 512, 128).unwrap());
 
     let engine = Engine::new(&config);
 
