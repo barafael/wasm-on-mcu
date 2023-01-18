@@ -4,7 +4,7 @@
 use stm32f4xx_hal::{prelude::*, rcc::RccExt};
 use wasmi_m4 as _; // global logger + panicking-behavior + memory layout
 
-use alloc_cortex_m::CortexMHeap;
+use embedded_alloc::Heap;
 use embedded_hal::blocking::delay::DelayMs;
 
 use wasmi::{Caller, Config, Engine, Extern, Func, Linker, Module, StackLimits, Store};
@@ -12,7 +12,7 @@ use wasmi::{Caller, Config, Engine, Extern, Func, Linker, Module, StackLimits, S
 type HostState = u32;
 
 #[global_allocator]
-static ALLOCATOR: CortexMHeap = CortexMHeap::empty();
+static ALLOCATOR: Heap = Heap::empty();
 
 #[cortex_m_rt::entry]
 fn main() -> ! {

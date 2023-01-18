@@ -6,11 +6,11 @@ use wasmi_m4 as _; // global logger + panicking-behavior + memory layout
 
 extern crate alloc;
 
-use alloc_cortex_m::CortexMHeap;
 use core::alloc::Layout;
+use embedded_alloc::Heap;
 
 #[global_allocator]
-static ALLOCATOR: CortexMHeap = CortexMHeap::empty();
+static ALLOCATOR: Heap = Heap::empty();
 
 #[cortex_m_rt::entry]
 fn main() -> ! {
