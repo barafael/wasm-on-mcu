@@ -6,7 +6,6 @@ use wasmi_m4 as _; // global logger + panicking-behavior + memory layout
 
 extern crate alloc;
 
-use alloc::vec::Vec;
 use alloc_cortex_m::CortexMHeap;
 use core::alloc::Layout;
 
@@ -25,8 +24,7 @@ fn main() -> ! {
     }
 
     defmt::println!("pushing");
-    let mut xs = Vec::new();
-    xs.push(1);
+    let _xs = alloc::vec![1];
 
     // Do not remove - pulls in the panic handler
     #[allow(unreachable_code)]
@@ -35,5 +33,7 @@ fn main() -> ! {
 
 #[alloc_error_handler]
 fn oom(_: Layout) -> ! {
-    loop {}
+    loop {
+        continue;
+    }
 }

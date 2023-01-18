@@ -1,6 +1,5 @@
 #![no_main]
 #![no_std]
-#![feature(default_alloc_error_handler)]
 
 use stm32f4xx_hal::{prelude::*, rcc::RccExt};
 use wasmi_m4 as _; // global logger + panicking-behavior + memory layout
