@@ -9,22 +9,22 @@ harness = false
 
 # needed for each integration test
 [[test]]
-name = "integration"
 harness = false
+name = "integration"
 
 [dependencies]
-alloc-cortex-m = "0.4.2"
-cortex-m = { version = "0.7.6", features = ["critical-section-single-core"] }
-cortex-m-rt = "0.7.0"
-defmt = "0.3.0"
-defmt-rtt = "0.3.0"
+alloc-cortex-m = "0.4.4"
+cortex-m = { version = "0.7.7", features = ["critical-section-single-core"] }
+cortex-m-rt = "0.7.2"
+defmt = "0.3.2"
+defmt-rtt = "0.3.2"
 embedded-hal = "0.2.7"
 panic-probe = { version = "0.3.0", features = ["print-defmt"] }
 wasmi = { version = "0.15.0", default-features = false }
 
 [dependencies.stm32f4xx-hal]
-version = "0.13.2"
 features = ["stm32f411"]
+version = "0.13.2"
 
 [dev-dependencies]
 defmt-test = "0.3.0"
