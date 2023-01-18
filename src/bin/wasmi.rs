@@ -80,7 +80,7 @@ fn main() -> ! {
         .get_export(&store, "color")
         .and_then(Extern::into_func)
         .expect("could not find function \"color\"")
-        .typed::<i32, i32, _>(&mut store)
+        .typed::<i32, i32>(&mut store)
         .unwrap();
 
     // - main loop ------------------------------------------------------------
